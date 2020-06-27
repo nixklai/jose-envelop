@@ -1,0 +1,17 @@
+{
+    "name": "nixklai/envelopes",
+    "description": "Wrapper classes for transferring data",
+    "type": "library",
+    "require": {
+        "spomky-labs/jose": "^7.1"
+    },
+    "require-dev": {
+            "phpunit/phpunit": "^9.2"
+    },
+    "authors": [
+        {
+            "name": "Nick Lai",
+            "email": "nick20080808@gmail.com"
+        }
+    ]
+}
