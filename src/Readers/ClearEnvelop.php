@@ -4,12 +4,13 @@ namespace Envelopes\Readers;
 
 use Jose\Factory\JWKFactory;
 use Jose\Factory\JWSFactory;
+use Jose\Object\JWK;
 use Jose\Verifier;
 use Envelopes\Traits\ConvertArrayToCheckerManagerTrait;
 use Jose\Loader;
 
 
-class ClearEnvelop
+class ClearEnvelop implements ReaderInterface
 {
     use ConvertArrayToCheckerManagerTrait;
 
@@ -17,11 +18,6 @@ class ClearEnvelop
     public $jws = null;
     public $jwk = null;
     public $allowed_algorithms = ['RS256', 'RS512'];
-
-    public function __construct()
-    {
-        return $this;
-    }
 
     /**
      * Intake token and store it
@@ -38,7 +34,23 @@ class ClearEnvelop
         return $this;
     }
 
+    /**
+     * Inject the private key
+     * @param $key
+     * @return $this
+     */
+    public function loadKey($key)
+    {
+        if (!$key instanceof JWK)
+            $this->jwk = JWKFactory::createFromValues($key);
 
+        return $this;
+    }
+
+    /*================================================
+     | Reading stuff
+     |================================================
+     */
     /**
      * Return KID
      */
@@ -59,26 +71,23 @@ class ClearEnvelop
             ->getPayload();
     }
 
-    /**
-     * Inject the private key
-     * @param $private_jwk
-     * @return $this
+    /*================================================
+     | Logic stuff
+     |================================================
      */
-    public function loadKey($private_jwk){
-        if(!$private_jwk instanceof JWKFactory)
-            $this->jwk = JWKFactory::createFromValues($private_jwk);
-
-        return $this;
-    }
-
-
     /**
+     * Determine whether the token is valid, duh
      * @return bool
      */
-    public function isValid(){
-        $verifier = Verifier::createVerifier($this->allowed_algorithms);
-        return (is_null(
-            $verifier->verifyWithKey($this->jws, $this->jwk)
-        ));
+    public function isValid()
+    {
+        try {
+            $verifier = Verifier::createVerifier($this->allowed_algorithms);
+            return (is_null(
+                $verifier->verifyWithKey($this->jws, $this->jwk)
+            ));
+        } catch (\InvalidArgumentException $e) { // gratefully reject token
+            return false;
+        }
     }
 }
