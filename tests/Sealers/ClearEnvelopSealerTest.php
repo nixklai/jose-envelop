@@ -15,7 +15,8 @@ class ClearEnvelopSealerTest extends TestCase
     use CommonPayloadSettingTrait;
     use TestDataTrait;
 
-    public function test_can_define_payload(){
+    public function test_can_define_payload()
+    {
         $envelop = $this
             ->generate_test_envelop();
         $envelop->loadKey($this->getSigningKey());
@@ -23,7 +24,8 @@ class ClearEnvelopSealerTest extends TestCase
         $this->assertEquals($envelop->payload, $this->test_payload);
     }
 
-    public function test_can_load_key(){
+    public function test_can_load_key()
+    {
         $envelop = new ClearEnvelopSealer();
         $envelop->loadKey($this->getVerifyingKey(true));
         $this->assertEquals($envelop->jwk, $this->getVerifyingKey());
@@ -58,12 +60,49 @@ class ClearEnvelopSealerTest extends TestCase
             $object_jws->getPayload());
     }
 
-    protected function generate_test_envelop(){
+    public function test_can_set_time_payload()
+    {
+        $jws = $this->generate_test_envelop()
+            ->setIssueTime()
+            ->setNotBefore(time() + 360)
+            ->setExpireAt(time() + 3600)
+            ->loadKey($this->getSigningKey())
+            ->seal();
+        $jws = (new loader())
+            ->load($jws);
+
+        $iat = $jws->getClaim('iat');
+        $nbf = $jws->getClaim('nbf');
+        $exp = $jws->getClaim('exp');
+
+        $this->assertEqualsWithDelta(time(), $iat, 5);
+        $this->assertEqualsWithDelta(time()+360, $nbf, 5);
+        $this->assertEqualsWithDelta(time()+3600, $exp, 5);
+
+
+        $jws = $this->generate_test_envelop()
+            ->setExpiry(7200)
+            ->setNotBefore()
+            ->loadKey($this->getSigningKey())
+            ->seal();
+        $jws = (new loader())
+            ->load($jws);
+
+        $exp = $jws->getClaim('exp');
+        $nbf = $jws->hasClaim('nbf');
+
+        $this->assertEqualsWithDelta(time()+7200 , $exp, 5);
+        $this->assertFalse($nbf);
+    }
+
+    protected function generate_test_envelop()
+    {
         return $this
             ->set_common_payload(new ClearEnvelopSealer());
     }
 
-    protected function generate_test_jws(){
+    protected function generate_test_jws()
+    {
         return $this
             ->generate_test_envelop()
             ->loadKey($this->getSigningKey(), $this->test_headers['kid'])

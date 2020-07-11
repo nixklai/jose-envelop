@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="tests" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" singleton="false" nameIsGenerated="true">
-    <TestRunner bootstrap_file="$PROJECT_DIR$/vendor/autoload.php" configuration_file="$PROJECT_DIR$/phpunit.xml" directory="$PROJECT_DIR$/tests" options="--coverage-html build/coverage-report.html" use_alternative_bootstrap_file="true" use_alternative_configuration_file="true" />
+    <TestRunner bootstrap_file="$PROJECT_DIR$/vendor/autoload.php" configuration_file="$PROJECT_DIR$/phpunit.xml" directory="$PROJECT_DIR$/tests" options="--coverage-html build/coverage-report" use_alternative_bootstrap_file="true" use_alternative_configuration_file="true" />
     <method v="2" />
   </configuration>
 </component>

@@ -17,7 +17,7 @@ class OpaqueEnvelop implements SealerInterface
     public array $payload = [];
 
     /**
-     * @return mixed|string
+     * @inheritDoc
      */
     public function seal()
     {

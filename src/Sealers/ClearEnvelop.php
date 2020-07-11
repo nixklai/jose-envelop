@@ -31,7 +31,7 @@ class ClearEnvelop implements SealerInterface
     protected function getHeaders()
     {
         $output = [
-            'alg' => 'RS256',
+            'alg' => 'RS256',       # Pick one from https://www.rfc-editor.org/rfc/rfc7518.html#section-3.1
         ];
 
         if (!is_null($this->kid))
