@@ -16,7 +16,7 @@ class ClearEnvelopReaderTest extends TestCase
 
     public function test_can_load_key(){
         $envelop = new ClearEnvelop();
-        $envelop->loadKey($this->getVerifyingKey());
+        $envelop->loadKey($this->getVerifyingKey(true));
         $this->assertEquals($envelop->jwk, $this->getVerifyingKey());
     }
 

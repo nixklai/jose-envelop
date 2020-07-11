@@ -2,49 +2,36 @@
 
 namespace Envelopes\Tests\Sealers;
 
+use Envelopes\Tests\CommonPayloadSettingTrait;
+use Envelopes\Tests\TestDataTrait;
 use Jose\Loader;
 use PHPUnit\Framework\TestCase;
-use Envelopes\Sealers\OpaqueEnvelop;
+use Envelopes\Sealers\OpaqueEnvelop as OpaqueEnvelopSealer;
 use Envelopes\Tests\OpaqueEnvelopKeyholderTrait;
 
 class OpaqueEnvelopSealerTest extends TestCase
 {
     use OpaqueEnvelopKeyholderTrait;
+    use CommonPayloadSettingTrait;
+    use TestDataTrait;
 
-    private $test_headers = [
-        'kid' => 'Test KID'
-    ];
-    private $test_payload = [
-        'iss' => 'Test Issuer',
-        'aud' => 'Test Audience',
-        'payload' => ['TestPayload']
-    ];
     public $allowed_key_encryption_methods = ['RSA-OAEP'];
     public $allowed_content_encryption_methods = ['A256GCM'];
 
-    public function test_can_add_payload()
+    public function test_can_define_payload()
     {
-        $envelop = new OpaqueEnvelop();
-
-        $envelop->setIssuer($this->test_payload['iss']);
-        $envelop->setAudience($this->test_payload['aud']);
-        $envelop->setPayload('payload', $this->test_payload['payload']);
+        $envelop = $this->generate_test_envelop();
+        $envelop
+            ->loadKey($this->getEncryptionKey());
 
         $this->assertEquals($envelop->payload, $this->test_payload);
     }
 
     public function test_can_seal_enevelop()
     {
-        $envelop = new OpaqueEnvelop();
-
-        // Load key
-        $envelop->loadKey($this->getEncryptionKey(), $this->test_headers['kid']);
-
-        // Load payload
-        $envelop->setIssuer($this->test_payload['iss']);
-        $envelop->setAudience($this->test_payload['aud']);
-        $envelop->setPayload('payload', $this->test_payload['payload']);
-
+        $envelop = $this
+            ->generate_test_envelop()
+            ->loadKey($this->getEncryptionKey(), $this->test_headers['kid']);
         $jwe = $envelop->seal();
 
         $loader = new Loader();
@@ -58,5 +45,18 @@ class OpaqueEnvelopSealerTest extends TestCase
             )->getPayload(),
             $this->test_payload,
         );
+    }
+
+    protected function generate_test_envelop()
+    {
+        return $this->set_common_payload(new OpaqueEnvelopSealer());
+    }
+
+    protected function generate_test_jwe()
+    {
+        return $this
+            ->generate_test_envelop()
+            ->loadKey($this->getEncryptionKey(), $this->test_headers['kid'])
+            ->seal();
     }
 }

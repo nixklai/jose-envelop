@@ -2,49 +2,53 @@
 
 namespace Envelopes\Tests\Sealers;
 
+use Envelopes\Tests\CommonPayloadSettingTrait;
+use Envelopes\Tests\TestDataTrait;
 use PHPUnit\Framework\TestCase;
 use Jose\Loader;
-use Envelopes\Sealers\ClearEnvelop;
+use Envelopes\Sealers\ClearEnvelop as ClearEnvelopSealer;
 use Envelopes\Tests\ClearEnvelopKeyholderTrait;
 
 class ClearEnvelopSealerTest extends TestCase
 {
     use ClearEnvelopKeyholderTrait;
+    use CommonPayloadSettingTrait;
+    use TestDataTrait;
 
-    private $test_kid = 'Test KID';
-    private $test_payload = [
-        'iss' => 'Test Issuer',
-        'aud' => 'Test Audience',
-    ];
+    public function test_can_define_payload(){
+        $envelop = $this
+            ->generate_test_envelop();
+        $envelop->loadKey($this->getSigningKey());
 
-    protected function generate_jws_with_enevelop(){
-        $envelop = new ClearEnvelop();
-        $envelop->loadKey($this->getSigningKey(), $this->test_kid);
-        $envelop->setIssuer($this->test_payload['iss']);
-        $envelop->setAudience($this->test_payload['aud']);
-        return $envelop->seal();
+        $this->assertEquals($envelop->payload, $this->test_payload);
     }
 
-    public function test_find_kid()
+    public function test_can_load_key(){
+        $envelop = new ClearEnvelopSealer();
+        $envelop->loadKey($this->getVerifyingKey(true));
+        $this->assertEquals($envelop->jwk, $this->getVerifyingKey());
+    }
+
+    public function test_write_kid_to_header()
     {
         $loader = new loader();
         $object_jws = $loader->loadAndVerifySignatureUsingKey(
-            $this->generate_jws_with_enevelop(),
+            $this->generate_test_jws(),
             $this->getVerifyingKey(),
             ['RS256']
         );
 
         $this->assertEquals(
-            $this->test_kid,
+            $this->test_headers['kid'],
             $object_jws->getSignature(0)->getProtectedHeader('kid')
         );
     }
 
-    public function test_find_payload()
+    public function test_payload_can_be_read()
     {
         $loader = new loader();
         $object_jws = $loader->loadAndVerifySignatureUsingKey(
-            $this->generate_jws_with_enevelop(),
+            $this->generate_test_jws(),
             $this->getVerifyingKey(),
             ['RS256']
         );
@@ -52,5 +56,17 @@ class ClearEnvelopSealerTest extends TestCase
         $this->assertEquals(
             $this->test_payload,
             $object_jws->getPayload());
+    }
+
+    protected function generate_test_envelop(){
+        return $this
+            ->set_common_payload(new ClearEnvelopSealer());
+    }
+
+    protected function generate_test_jws(){
+        return $this
+            ->generate_test_envelop()
+            ->loadKey($this->getSigningKey(), $this->test_headers['kid'])
+            ->seal();
     }
 }

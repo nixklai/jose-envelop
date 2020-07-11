@@ -91,7 +91,7 @@ trait CommonPayloadSetterTrait
      */
     public function setJWTID($jti)
     {
-        $payload['jti'] = $jti;
+        $this->payload['jti'] = $jti;
         return $this;
     }
 

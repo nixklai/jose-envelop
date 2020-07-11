@@ -6,11 +6,11 @@ trait OpaqueEnvelopKeyholderTrait
 {
     use AccessTestingKeyTrait;
 
-    private function getEncryptionKey(){
-        return $this->getKey('public_encryption_key');
+    private function getEncryptionKey($want_array = false){
+        return $this->getKey('public_encryption_key', $want_array);
     }
 
-    private function getDecryptionKey(){
-        return $this->getKey('private_decryption_key');
+    private function getDecryptionKey($want_array = false){
+        return $this->getKey('private_decryption_key', $want_array);
     }
 }

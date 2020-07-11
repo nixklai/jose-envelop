@@ -6,11 +6,11 @@ trait ClearEnvelopKeyholderTrait
 {
     use AccessTestingKeyTrait;
 
-    private function getVerifyingKey(){
-        return $this->getKey('public_verifying_key');
+    private function getVerifyingKey($want_array = false){
+        return $this->getKey('public_verifying_key', $want_array);
     }
 
-    private function getSigningKey(){
-        return $this->getKey('private_signing_key');
+    private function getSigningKey($want_array = false){
+        return $this->getKey('private_signing_key', $want_array);
     }
 }
