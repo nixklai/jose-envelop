@@ -8,6 +8,10 @@ interface SealerInterface
 {
     public function loadKey($key);
 
+    /**
+     * Seal up the envelop and return the JWT
+     * @return mixed
+     */
     public function seal();
 
     // Must implement all available "Registered Claim Names" as shown in https://tools.ietf.org/html/rfc7519

@@ -4,24 +4,24 @@
 namespace Envelopes\Sealers;
 
 use Envelopes\Traits\SealerKeyLoadingTrait;
-use Jose\Factory\JWSFactory;
+use Jose\Factory\JWEFactory;
 use Jose\Object\JWK;
 
-class ClearEnvelop implements SealerInterface
+class OpaqueEnvelop implements SealerInterface
 {
-    use CommonPayloadSetterTrait;
     use SealerKeyLoadingTrait;
+    use CommonPayloadSetterTrait;
 
     public string $kid = '';
     public JWK $jwk;
     public array $payload = [];
 
     /**
-     * @inheritDoc
+     * @return mixed|string
      */
     public function seal()
     {
-        return JWSFactory::createJWSToCompactJSON(
+        return JWEFactory::createJWeToCompactJSON(
             $this->payload,
             $this->jwk,
             $this->getHeaders()
@@ -31,7 +31,9 @@ class ClearEnvelop implements SealerInterface
     protected function getHeaders()
     {
         $output = [
-            'alg' => 'RS256',
+            'alg' => 'RSA-OAEP',        # Pick one from https://www.rfc-editor.org/rfc/rfc7518.html#section-4.1
+            'enc' => 'A256GCM',         # Pick one from https://www.rfc-editor.org/rfc/rfc7518.html#section-5.1
+            'zip' => 'GZ'
         ];
 
         if (!is_null($this->kid))

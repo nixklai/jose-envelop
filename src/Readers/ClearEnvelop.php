@@ -2,21 +2,16 @@
 
 namespace Envelopes\Readers;
 
-use Jose\Factory\JWKFactory;
-use Jose\Factory\JWSFactory;
-use Jose\Object\JWK;
-use Jose\Verifier;
-use Envelopes\Traits\ConvertArrayToCheckerManagerTrait;
+use Envelopes\Traits\ReaderKeyLoadingTrait;
 use Jose\Loader;
-
+use Jose\Verifier;
+use InvalidArgumentException;
 
 class ClearEnvelop implements ReaderInterface
 {
-    use ConvertArrayToCheckerManagerTrait;
+    use ReaderKeyLoadingTrait;
 
-    public $token = '';
     public $jws = null;
-    public $jwk = null;
     public $allowed_algorithms = ['RS256', 'RS512'];
 
     /**
@@ -26,24 +21,7 @@ class ClearEnvelop implements ReaderInterface
      */
     public function load($token)
     {
-        $this->token = $token;
-
-        $loader = new Loader();
-        $this->jws = $loader->load($this->token);
-
-        return $this;
-    }
-
-    /**
-     * Inject the private key
-     * @param $key
-     * @return $this
-     */
-    public function loadKey($key)
-    {
-        if (!$key instanceof JWK)
-            $this->jwk = JWKFactory::createFromValues($key);
-
+        $this->jws = (new Loader())->load($token);
         return $this;
     }
 
@@ -86,7 +64,7 @@ class ClearEnvelop implements ReaderInterface
             return (is_null(
                 $verifier->verifyWithKey($this->jws, $this->jwk)
             ));
-        } catch (\InvalidArgumentException $e) { // gratefully reject token
+        } catch (InvalidArgumentException $e) { // gratefully reject token
             return false;
         }
     }

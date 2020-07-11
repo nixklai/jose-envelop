@@ -1,10 +1,11 @@
 <?php
 
-namespace Envelopes\Tests;
+namespace Envelopes\Tests\Sealers;
 
-use Envelopes\Sealers\ClearEnvelop;
-use Jose\Loader;
 use PHPUnit\Framework\TestCase;
+use Jose\Loader;
+use Envelopes\Sealers\ClearEnvelop;
+use Envelopes\Tests\ClearEnvelopKeyholderTrait;
 
 class ClearEnvelopSealerTest extends TestCase
 {
