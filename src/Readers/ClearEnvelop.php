@@ -4,50 +4,16 @@ namespace Envelopes\Readers;
 
 use Envelopes\Traits\ReaderKeyLoadingTrait;
 use Jose\Loader;
-use Jose\Verifier;
+use Jose\Object\JWS;
 use InvalidArgumentException;
 
-class ClearEnvelop implements ReaderInterface
+class ClearEnvelop extends EnvelopReaderAbstractClass implements ReaderInterface
 {
     use ReaderKeyLoadingTrait;
 
-    public $jws = null;
-    public $allowed_algorithms = ['RS256', 'RS512'];
-
-    /**
-     * Intake token and store it
-     * @param $token
-     * @return $this
-     */
-    public function load($token)
-    {
-        $this->jws = (new Loader())->load($token);
-        return $this;
-    }
-
-    /*================================================
-     | Reading stuff
-     |================================================
-     */
-    /**
-     * Return KID
-     */
-    public function getKID()
-    {
-        return $this->jws
-            ->getSignature(0)
-            ->getProtectedHeader('kid');
-    }
-
-    /**
-     * Return payload
-     * @return mixed
-     */
-    public function getPayload()
-    {
-        return $this->jws
-            ->getPayload();
-    }
+    public string $raw_token;
+    public JWS $token;
+    public array $allowed_algorithms = ['RS256', 'RS512'];
 
     /*================================================
      | Logic stuff
@@ -60,11 +26,13 @@ class ClearEnvelop implements ReaderInterface
     public function isValid()
     {
         try {
-            $verifier = Verifier::createVerifier($this->allowed_algorithms);
-            return (is_null(
-                $verifier->verifyWithKey($this->jws, $this->jwk)
-            ));
-        } catch (InvalidArgumentException $e) { // gratefully reject token
+            (new Loader())->loadAndVerifySignatureUsingKey(
+                $this->raw_token,
+                $this->jwk,
+                $this->allowed_algorithms
+            );
+            return true;
+        } catch (InvalidArgumentException $e) {
             return false;
         }
     }

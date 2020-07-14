@@ -3,60 +3,73 @@
 namespace Envelopes\Tests\Readers;
 
 use PHPUnit\Framework\TestCase;
+use Envelopes\Sealers\ClearEnvelop as ClearEnvelopSealer;
+use Envelopes\Readers\ClearEnvelop as ClearEnvelopReader;
 use Envelopes\Tests\ClearEnvelopKeyholderTrait;
-use Envelopes\Readers\ClearEnvelop;
+use Envelopes\Tests\AccessTestingKeyTrait;
+use Envelopes\Tests\CommonPayloadSettingTrait;
+use Envelopes\Tests\TestDataTrait;
 
 
 class ClearEnvelopReaderTest extends TestCase
 {
     use ClearEnvelopKeyholderTrait;
+    use TestDataTrait;
+    use AccessTestingKeyTrait;
+    use CommonPayloadSettingTrait;
 
-    private $envelop;
-    private $no_expiry_jwt = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjEifQ.eyJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.Dyau6xOhGEElbhK4DbF1WMFHV-2VRKSZAiq3bTEblAQ9tfYiGhtCiYxPhJmBvitsFYra4uHB2mPQGgmKgePMPLELHQv6fIbduWV4567Y1dThrmS172PlkM5OpukZKgxchEntH-MRaN6_aohFxSPomS0hcw9H9MU71cvdHhSBUw6KtDqqKk5SHQmPtYFexpVkh_i3MAMOFNgwYKPJDlW-7E7XWV40h3uHA1qpPTmKXYj3VCxA3jNOplwI5K7nt3povRDNhXDZtFAojd_aFWwpIuuEhYjbRdB5GrbGrqy21fdt4pUqKXsSomDIbF47pYcEbL19aDxSGVWxepy4AQ6IAjA2jcOVeqMFlTRxp4mSK3KxAXYGRjDGnwD77E8EMWA10YYrchj6IAuECgh_Spdl0kgrI7RA-yhot-DS3iAS1eErEuX6_GIu1rSMqVTb4us0kMZ6c_Gjb4JFblsXhAQcYDLBmpeId7bvoc7PlCn8YtIgdqMLPobkX5fqOd9tgmMd-cUiEFFtkVb69aDAkZQiozCwDwceIVJthAAvjLT-G5cQ5pFJsIA3Y_5ZNWqBtT0fjnV1cYHEBJOBgrscbMfGsNsa1CPOmqvMhzj_n7wCfmXAVrqPWHs8lpEarVP-5V1n22eby7ZN7J_GvzzHP9K1qTVGRr0YnX8I6-hHWFxiA5A';
-
-    public function test_can_load_key(){
-        $envelop = new ClearEnvelop();
+    public function test_can_load_key()
+    {
+        $envelop = new ClearEnvelopReader();
         $envelop->loadKey($this->getVerifyingKey(true));
         $this->assertEquals($envelop->jwk, $this->getVerifyingKey());
     }
 
-    public function testCanGetKIDofJWT()
+    public function test_can_get_KID_of_JWT()
     {
-        $this->envelop = new ClearEnvelop();
-        $this->envelop->load($this->no_expiry_jwt);
+        $envelop = new ClearEnvelopReader();
+        $envelop->load($this->generate_test_token());
 
-        $this->assertSame(
-            $this->envelop->getKID(), "1"
-        );
+        $this->assertEquals("Test KID", $envelop->getKID());
     }
 
-    public function testCanLoadAndReadJWT()
+    public function test_can_load_and_read_token()
     {
-        $this->envelop = new ClearEnvelop();
-        $this->envelop->load($this->no_expiry_jwt);
+        $envelop = new ClearEnvelopReader();
+        $envelop->load($this->generate_test_token());
 
-        $this->assertSame(
-            $this->envelop->getPayload(),
-            [
-                "name" => "John Doe",
-                "iat" => 1516239022,
-            ]
+        $this->assertEqualsCanonicalizing(
+            $this->test_payload,
+            $envelop->getPayload(),
         );
     }
 
     public function test_pass_token_verification()
     {
-        $this->envelop = new ClearEnvelop();
-        $this->envelop->load($this->no_expiry_jwt);
-        $this->envelop->loadKey($this->getVerifyingKey());
-        $this->assertTrue($this->envelop->isValid());
+        $token = $this->generate_test_token();
+        $envelop = new ClearEnvelopReader();
+        $envelop
+            ->load($token)
+            ->loadKey($this->getVerifyingKey());
+
+        $this->assertTrue($envelop->isValid());
     }
 
     public function test_can_fail_token_verification()
     {
-        $this->envelop = new ClearEnvelop();
-        $this->envelop->load(str_replace('a', 'b', $this->no_expiry_jwt));
-        $this->envelop->loadKey($this->getVerifyingKey());
-        $this->assertFalse($this->envelop->isValid());
+        $envelop = new ClearEnvelopReader();
+        $envelop
+            ->load(str_replace('a', 'b', $this->generate_test_token()))
+            ->loadKey($this->getVerifyingKey());
+
+        $this->assertFalse($envelop->isValid());
+    }
+
+    protected function generate_test_token()
+    {
+        return $this
+            ->set_common_payload(new ClearEnvelopSealer())
+            ->loadKey($this->getSigningKey(), 'Test KID')
+            ->seal();
     }
 }
