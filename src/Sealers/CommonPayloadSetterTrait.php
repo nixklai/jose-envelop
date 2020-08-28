@@ -67,7 +67,7 @@ trait CommonPayloadSetterTrait
     /**
      * @inheritDoc
      */
-    public function setExpiry($offset)
+    public function setExpireIn($offset)
     {
         $this->payload['exp'] = time() + $offset;
         return $this;
@@ -76,7 +76,7 @@ trait CommonPayloadSetterTrait
     /**
      * @inheritDoc
      */
-    public function setExpireAt($exp)
+    public function setExpiry($exp)
     {
         $this->payload['exp'] = $exp;
         return $this;

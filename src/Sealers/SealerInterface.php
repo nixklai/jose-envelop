@@ -61,14 +61,14 @@ interface SealerInterface
      * @param $exp
      * @return $this
      */
-    public function setExpireAt($exp);
+    public function setExpiry($exp);
 
     /**
      * Define a time for token to expire
      * @param $offset
      * @return $this
      */
-    public function setExpiry($offset);
+    public function setExpireIn($offset);
 
     /**
      * Define a item on the payload JSON tree

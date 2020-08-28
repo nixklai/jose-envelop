@@ -13,7 +13,7 @@ use Envelopes\Sealers\ClearEnvelop;
 $envelop = new ClearEnvelop();
 $envelop->setIssuer('Alice')
         ->setAudience('Bob')
-        ->setExpiry(60) // Expire in next 60 seconds
+        ->setExpireIn(60) // Expire in next 60 seconds
         ->setJWTID(time());
 
 echo $envelop->seal(); // Seal up the envelop and done!

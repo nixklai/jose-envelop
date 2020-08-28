@@ -13,7 +13,7 @@ class ClearEnvelop extends EnvelopReaderAbstractClass implements ReaderInterface
 
     public string $raw_token;
     public JWS $token;
-    public array $allowed_algorithms = ['RS256', 'RS512'];
+    public array $allowed_algorithms = ['RS256', 'RS512', 'ES256'];
 
     /*================================================
      | Logic stuff
@@ -35,5 +35,10 @@ class ClearEnvelop extends EnvelopReaderAbstractClass implements ReaderInterface
         } catch (InvalidArgumentException $e) {
             return false;
         }
+    }
+
+    public function getIssuer(){
+        return $this->token
+            ->getClaim('iss');
     }
 }

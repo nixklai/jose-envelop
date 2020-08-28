@@ -65,7 +65,7 @@ class ClearEnvelopSealerTest extends TestCase
         $jws = $this->generate_test_envelop()
             ->setIssueTime()
             ->setNotBefore(time() + 360)
-            ->setExpireAt(time() + 3600)
+            ->setExpiry(time() + 3600)
             ->loadKey($this->getSigningKey())
             ->seal();
         $jws = (new loader())
@@ -81,7 +81,7 @@ class ClearEnvelopSealerTest extends TestCase
 
 
         $jws = $this->generate_test_envelop()
-            ->setExpiry(7200)
+            ->setExpireIn(7200)
             ->setNotBefore()
             ->loadKey($this->getSigningKey())
             ->seal();
@@ -91,7 +91,7 @@ class ClearEnvelopSealerTest extends TestCase
         $exp = $jws->getClaim('exp');
         $nbf = $jws->hasClaim('nbf');
 
-        $this->assertEqualsWithDelta(time()+7200 , $exp, 5);
+        $this->assertEqualsWithDelta(time()+7200, $exp, 5);
         $this->assertFalse($nbf);
     }
 

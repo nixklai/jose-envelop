@@ -8,6 +8,7 @@ interface ReaderInterface
 {
     // Load situational stuff
     public function load($token);
+
     public function loadKey($key);
 
     public function getKID();

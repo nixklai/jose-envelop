@@ -25,5 +25,11 @@
       "name": "Nick Lai",
       "email": "nick20080808@gmail.com"
     }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/nixklai/jose-envelop"
+    }
   ]
 }
