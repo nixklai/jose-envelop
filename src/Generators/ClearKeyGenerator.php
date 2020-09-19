@@ -8,7 +8,7 @@ use Jose\Factory\JWKFactory;
 
 class ClearKeyGenerator
 {
-    public JWK $jwk;
+    public $jwk;
 
     public function __construct($settings = []){
         $this->jwk = JWKFactory::createKey(array_merge([

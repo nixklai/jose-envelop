@@ -11,7 +11,7 @@ abstract class EnvelopReaderAbstractClass
 {
     use ReaderKeyLoadingTrait;
 
-    public string $raw_token = '';
+    public $raw_token = '';
 
     /*================================================
      | Reading stuff

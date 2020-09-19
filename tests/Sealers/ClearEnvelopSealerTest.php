@@ -75,9 +75,9 @@ class ClearEnvelopSealerTest extends TestCase
         $nbf = $jws->getClaim('nbf');
         $exp = $jws->getClaim('exp');
 
-        $this->assertEqualsWithDelta(time(), $iat, 5);
-        $this->assertEqualsWithDelta(time()+360, $nbf, 5);
-        $this->assertEqualsWithDelta(time()+3600, $exp, 5);
+        $this->assertEquals(time(), $iat, 'Expect "iat" attribute to be time()', 5);
+        $this->assertEquals(time()+360, $nbf, 'Expect "nbf" attribute to be 360 second after now', 5);
+        $this->assertEquals(time()+3600, $exp, 'Expect "exp" attribute to be 1 hour after now',5);
 
 
         $jws = $this->generate_test_envelop()
@@ -91,7 +91,7 @@ class ClearEnvelopSealerTest extends TestCase
         $exp = $jws->getClaim('exp');
         $nbf = $jws->hasClaim('nbf');
 
-        $this->assertEqualsWithDelta(time()+7200, $exp, 5);
+        $this->assertEquals(time()+7200, $exp, 'Expect "exp" attribute to be 2 hours from now.',5);
         $this->assertFalse($nbf);
     }
 

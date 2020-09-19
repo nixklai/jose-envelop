@@ -11,9 +11,9 @@ class ClearEnvelop extends EnvelopReaderAbstractClass implements ReaderInterface
 {
     use ReaderKeyLoadingTrait;
 
-    public string $raw_token;
-    public JWS $token;
-    public array $allowed_algorithms = ['RS256', 'RS512', 'ES256'];
+    public $raw_token;
+    public $token;
+    public $allowed_algorithms = ['RS256', 'RS512', 'ES256'];
 
     /*================================================
      | Logic stuff

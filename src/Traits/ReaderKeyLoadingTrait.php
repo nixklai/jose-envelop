@@ -9,8 +9,6 @@ use Jose\Object\JWK;
 
 trait ReaderKeyLoadingTrait
 {
-    public $jwk = null;
-
     /**
      * Inject the private key
      * @param $key

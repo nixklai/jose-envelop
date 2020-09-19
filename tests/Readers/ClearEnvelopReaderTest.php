@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Envelopes\Sealers\ClearEnvelop as ClearEnvelopSealer;
 use Envelopes\Readers\ClearEnvelop as ClearEnvelopReader;
 use Envelopes\Tests\ClearEnvelopKeyholderTrait;
-use Envelopes\Tests\AccessTestingKeyTrait;
 use Envelopes\Tests\CommonPayloadSettingTrait;
 use Envelopes\Tests\TestDataTrait;
 
@@ -15,7 +14,6 @@ class ClearEnvelopReaderTest extends TestCase
 {
     use ClearEnvelopKeyholderTrait;
     use TestDataTrait;
-    use AccessTestingKeyTrait;
     use CommonPayloadSettingTrait;
 
     public function test_can_load_key()
@@ -38,9 +36,20 @@ class ClearEnvelopReaderTest extends TestCase
         $envelop = new ClearEnvelopReader();
         $envelop->load($this->generate_test_token());
 
-        $this->assertEqualsCanonicalizing(
+        $this->assertEquals(
             $this->test_payload,
-            $envelop->getPayload(),
+            $envelop->getPayload()
+        );
+    }
+
+    public function test_can_find_issuer()
+    {
+        $envelop = new ClearEnvelopReader();
+        $envelop->load($this->generate_test_token());
+
+        $this->assertEquals(
+            'Test Issuer',
+            $envelop->getIssuer()
         );
     }
 

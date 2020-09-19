@@ -12,9 +12,9 @@ class OpaqueEnvelop extends EnvelopReaderAbstractClass implements ReaderInterfac
 {
     use ReaderKeyLoadingTrait;
 
-    public JWE $token;
-    public array $support_key_encryption = ['RSA-OAEP'];
-    public array $support_content_encryption = ['A256GCM'];
+    public $token;
+    public $support_key_encryption = ['RSA-OAEP'];
+    public $support_content_encryption = ['A256GCM'];
 
     public function isValid()
     {

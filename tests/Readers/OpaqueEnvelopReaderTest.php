@@ -6,7 +6,6 @@ use Envelopes\Readers\OpaqueEnvelop;
 use Envelopes\Readers\OpaqueEnvelop as OpaqueEnvelopReader;
 use PHPUnit\Framework\TestCase;
 use Envelopes\Sealers\OpaqueEnvelop as OpaqueEnvelopSealer;
-use Envelopes\Tests\AccessTestingKeyTrait;
 use Envelopes\Tests\CommonPayloadSettingTrait;
 use Envelopes\Tests\TestDataTrait;
 use Envelopes\Tests\OpaqueEnvelopKeyholderTrait;
@@ -15,7 +14,6 @@ class OpaqueEnvelopReaderTest extends TestCase
 {
     use OpaqueEnvelopKeyholderTrait;
     use TestDataTrait;
-    use AccessTestingKeyTrait;
     use CommonPayloadSettingTrait;
 
     public function test_can_load_key()

@@ -12,9 +12,9 @@ class ClearEnvelop implements SealerInterface
     use CommonPayloadSetterTrait;
     use SealerKeyLoadingTrait;
 
-    public string $kid = '';
-    public JWK $jwk;
-    public array $payload = [];
+    public $kid = '';
+    public $jwk;
+    public $payload = [];
 
     /**
      * @inheritDoc

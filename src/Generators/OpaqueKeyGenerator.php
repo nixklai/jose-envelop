@@ -8,7 +8,7 @@ use Jose\Factory\JWKFactory;
 
 class OpaqueKeyGenerator
 {
-    public JWK $jwk;
+    public $jwk;
 
     public function __construct($settings = []){
         return JWKFactory::createKey(array_merge([

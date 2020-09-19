@@ -5,16 +5,15 @@ namespace Envelopes\Sealers;
 
 use Envelopes\Traits\SealerKeyLoadingTrait;
 use Jose\Factory\JWEFactory;
-use Jose\Object\JWK;
 
 class OpaqueEnvelop implements SealerInterface
 {
     use SealerKeyLoadingTrait;
     use CommonPayloadSetterTrait;
 
-    public string $kid = '';
-    public JWK $jwk;
-    public array $payload = [];
+    public $kid = '';
+    public $jwk;
+    public $payload = [];
 
     /**
      * @inheritDoc

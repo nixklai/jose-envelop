@@ -43,7 +43,7 @@ class OpaqueEnvelopSealerTest extends TestCase
                 $this->allowed_key_encryption_methods,
                 $this->allowed_content_encryption_methods
             )->getPayload(),
-            $this->test_payload,
+            $this->test_payload
         );
     }
 

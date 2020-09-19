@@ -1,14 +1,14 @@
 {
   "name": "nixklai/envelopes",
-  "description": "Wrapper classes for transferring data",
+  "description": "Wrapper classes for JSON web token",
   "type": "library",
   "require": {
-    "spomky-labs/jose": "^7.1",
-    "ext-json": "^5.6"
+    "php": "~5.6.0",
+    "spomky-labs/jose": "~6.1.7"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.2",
-    "phpunit/php-code-coverage": "^8.0"
+    "phpunit/phpunit": "^5.7.20",
+    "phpunit/php-code-coverage": "^4.0.8"
   },
   "autoload": {
     "psr-4": {
